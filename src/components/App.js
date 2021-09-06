@@ -17,10 +17,6 @@ const initialState = {
 const App = () => {
   const [state, setState] = useState(initialState);
 
-  const addLargeImg = largeImgUrl => {
-    setState(prev => ({ ...prev, largeImage: largeImgUrl }));
-  };
-
   const onChangeQuery = query => {
     setState(prev => ({
       ...prev,
@@ -64,8 +60,8 @@ const App = () => {
     state.searchQuery && fetchHits(state.searchQuery);
   }, [state.searchQuery]);
 
-  const toggleModal = () => {
-    setState(prev => ({ ...prev, largeImageURL: !largeImageURL }));
+  const toggleModal = url => {
+    setState(prev => ({ ...prev, largeImageURL: url }));
   };
 
   const { hits, isLoading, largeImageURL } = state;
@@ -73,8 +69,10 @@ const App = () => {
   return (
     <div className="App">
       <Searchbar onSubmit={onChangeQuery} />
-      {largeImageURL && <Modal onClose={toggleModal} url={largeImageURL} />}
-      <ImageGallery hits={state.hits} addLargeImg={addLargeImg} />
+      {largeImageURL && (
+        <Modal onClose={toggleModal} largeImageURL={largeImageURL} />
+      )}
+      <ImageGallery hits={state.hits} onClick={toggleModal} />
       {hits.length > 0 && !isLoading && <Button fetchHits={fetchHits} />}
       {isLoading && <LoaderSpinner />}
     </div>
